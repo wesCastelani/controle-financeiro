@@ -1,20 +1,21 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3001/api/transaction';
+const api = axios.create({ baseURL: 'api' });
+const API_URL = '/transaction';
 
 async function getAllTransactions(period) {
-  const res = await axios.get(`${API_URL}?period=${period}`);
+  const res = await api.get(`${API_URL}?period=${period}`);
   const data = res.data;
   return data;
 }
 
 async function insert(transaction) {
-  const response = await axios.post(`${API_URL}/create`, transaction);
+  const response = await api.post(`${API_URL}/create`, transaction);
   return response.data.id;
 }
 
 async function deleteTransaction(transaction) {
-  const response = await axios.delete(`${API_URL}/remove/${transaction.id}`);
+  const response = await api.delete(`${API_URL}/remove/${transaction.id}`);
   return response.data;
 }
 
