@@ -1,0 +1,28 @@
+.cardT {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: flex-start;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 5px;
+  margin: 20px 5px 5px;
+}
+
+.content {
+  display: flex;
+  flex: 7 1 0%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.trans {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.text {
+  margin-right: 20px;
+}

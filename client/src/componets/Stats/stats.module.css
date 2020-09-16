@@ -1,0 +1,10 @@
+.statsBar {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px;
+  margin: 10px;
+  border: 1px solid lightgrey;
+  border-radius: 4px;
+}
