@@ -2,19 +2,20 @@ import React from 'react';
 
 import css from './transactions.module.css';
 import Action from './Action';
+import Period from '../Inputs/Period';
 
 export default function Transactions(props) {
-  const { transactions, onDelete, onPersist } = props;
+  const { transactions, onDelete, selectTransaction } = props;
 
   const handleActionClick = (id, type) => {
     const transaction = transactions.find(
-      (transaction) => transaction._id === id
+      (transaction) => transaction.id === id
     );
     if (type === 'delete') {
       onDelete(transaction);
       return;
     }
-    onPersist(transaction);
+    selectTransaction(transaction);
   };
 
   return (
@@ -27,7 +28,7 @@ export default function Transactions(props) {
           bgColor = styles.green;
         }
         return (
-          <div className={css.cardT} style={bgColor}>
+          <div key={transaction.id} className={css.cardT} style={bgColor}>
             <span className={css.text}>{transaction.day}</span>
             <div className={css.content}>
               <div className={css.trans}>
@@ -37,12 +38,12 @@ export default function Transactions(props) {
               <span style={{ textAlign: 'right' }}>R$ {transaction.value}</span>
               <div>
                 <Action
-                  id={transaction._id}
+                  id={transaction.id}
                   type="edit"
                   onClick={handleActionClick}
                 ></Action>
                 <Action
-                  id={transaction._id}
+                  id={transaction.id}
                   type="delete"
                   onClick={handleActionClick}
                 ></Action>

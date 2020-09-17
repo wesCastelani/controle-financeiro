@@ -3,26 +3,32 @@ const ObjectId = mongoose.Types.ObjectId;
 
 const TransactionModel = require('../models/TransactionModel');
 
-const create = async (req, res) => {
-  console.log('to aqui');
+const transactionReturn = (body) => {
+  const { description, value, category, year, month, day, type } = body;
+  const period = `${year}-${month.toString().padStart(2, '0')}`;
+  const yearMonthDay = `${period}-${day.toString().padStart(2, '0')}`;
 
-  const transactionModel = new TransactionModel({
-    description: req.body.description,
-    value: req.body.value,
-    category: req.body.category,
-    year: req.body.year,
-    month: req.body.month,
-    day: req.body.day,
-    yearMonth: req.body.yearMonth,
-    yearMonthDay: req.body.yearMonthDay,
-    type: req.body.type,
-  });
+  const newTransaction = {
+    description,
+    value,
+    category,
+    year,
+    month,
+    day,
+    yearMonth: period,
+    yearMonthDay,
+    type,
+  };
+
+  return newTransaction;
+};
+
+const create = async (req, res) => {
+  const newTransaction = transactionReturn(req.body);
 
   try {
-    await transactionModel.save();
-
-    //res.send(transactionModel);
-    res.send({ message: 'inserido com sucesso' });
+    const addTransaction = await TransactionModel.create(newTransaction);
+    res.send({ message: 'inserido com sucesso', transaction: addTransaction });
   } catch (error) {
     res
       .status(500)
@@ -34,7 +40,7 @@ const findPeriod = async (req, res) => {
   let yearMonth;
 
   if (!req.query.period) {
-    res.status(500).send({ message: 'Informe o perido em year-month' });
+    res.status(500).send({ message: 'Informe o periodo em year-month' });
   } else {
     yearMonth = req.query.period;
   }
@@ -56,48 +62,26 @@ const findPeriod = async (req, res) => {
   }
 };
 
-const findDesc = async (req, res) => {
-  const description = req.body.description;
-
-  var condition = description
-    ? { description: { $regex: new RegExp(description), $options: 'i' } }
-    : {};
-
-  try {
-    const data = await TransactionModel.find(condition);
-
-    if (!data) {
-      res.status(404).send({ message: 'não encontrado' });
-    } else {
-      res.send(data);
-    }
-  } catch (error) {
-    res.status(500).send({ message: 'Erro ao buscar: ' + description });
-  }
-};
-
 const update = async (req, res) => {
   if (!req.body) {
     return res.status(400).send({
-      message: 'Dados para atualizacao vazio',
+      message: 'Dados para atualizaçao vazio',
     });
   }
+  const updateTransaction = transactionReturn(req.body);
 
   const id = req.params.id;
 
   try {
-    const data = await TransactionModel.findByIdAndUpdate(
+    const data = await TransactionModel.updateOne(
       { _id: id },
-      req.body,
-      {
-        new: true,
-      }
+      updateTransaction
     );
 
     if (!data) {
       res.status(404).send({ message: 'Id não encontrado para atualização' });
     } else {
-      res.send(data);
+      res.send({ status: 'ok', transaction: updateTransaction });
     }
   } catch (error) {
     res.status(500).send({ message: 'Erro ao atualizar: ' + id });
@@ -108,7 +92,7 @@ const remove = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const data = TransactionModel.findByIdAndRemove({ _id: id });
+    const data = await TransactionModel.deleteOne({ _id: id });
 
     if (!data) {
       res.status(404).send({ message: 'Id não encontrado para exclusão' });
@@ -120,4 +104,4 @@ const remove = async (req, res) => {
   }
 };
 
-module.exports = { create, findPeriod, findDesc, update, remove };
+module.exports = { create, findPeriod, update, remove };

@@ -15,6 +15,7 @@ export default function App() {
   const [expenses, setExpenses] = useState(0);
   const [period, setPeriod] = useState('2019-01');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState();
 
   useEffect(() => {
     const getTransactions = async () => {
@@ -69,7 +70,7 @@ export default function App() {
     const isDeleted = await api.deleteTransaction(transactionToDelete);
     if (isDeleted) {
       const index = filteredTransactions.findIndex(
-        (transaction) => transaction._id === transactionToDelete._id
+        (transaction) => transaction.id === transactionToDelete.id
       );
       const newAllTransactions = Object.assign([], filteredTransactions);
       newAllTransactions.splice(index, 1);
@@ -103,8 +104,31 @@ export default function App() {
     setIsModalOpen(false);
   };
 
-  const onPersist = () => {
+  const selectTransaction = (transaction) => {
     setIsModalOpen(true);
+    setSelectedTransaction(transaction);
+  };
+
+  const onPersist = async (newTransaction, mode) => {
+    if (mode === 'insert') {
+      const postedTransaction = await api.insert(newTransaction);
+      let newTransactions = [...filteredTransactions, postedTransaction];
+      setFilteredTransactions(newTransactions);
+      setSelectedTransaction(null);
+
+      return;
+    }
+    if (mode === 'edit') {
+      const updatedTransaction = await api.update(newTransaction);
+      console.log(updatedTransaction);
+      const newTransactions = [...filteredTransactions];
+      const index = newTransactions.findIndex(
+        (transaction) => transaction.id === newTransaction.id
+      );
+
+      newTransactions[index] = updatedTransaction;
+      setFilteredTransactions(newTransactions);
+    }
   };
 
   return (
@@ -117,17 +141,22 @@ export default function App() {
         expense={expenses}
       ></Stats>
       <Inputs
-        onClick={onPersist}
+        onClick={selectTransaction}
         filter={filter}
         onChangeFilter={handleChangeFilter}
       ></Inputs>
       <Transactions
         onDelete={handleDelete}
-        onPersist={onPersist}
+        selectTransaction={selectTransaction}
         transactions={filteredTransactions}
       ></Transactions>
       {isModalOpen && (
-        <ModalCtrl onSave={onPersist} onClose={handleClose}></ModalCtrl>
+        <ModalCtrl
+          isOpen={isModalOpen}
+          onClose={handleClose}
+          onSave={onPersist}
+          selectedTransaction={selectedTransaction}
+        />
       )}
     </div>
   );
