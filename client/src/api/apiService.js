@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3001/api/transaction';
+//const API_URL = 'http://localhost:3001/api/transaction';
 
-//const api = axios.create({ baseURL: 'api' });
-//const API_URL = '/transaction';
+const axios = axios.create({ baseURL: 'api' });
+const API_URL = '/transaction';
 
 async function getAllTransactions(period) {
   const res = await axios.get(`${API_URL}?period=${period}`);
