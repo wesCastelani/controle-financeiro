@@ -29,7 +29,7 @@ function getCompleteTransaction(transaction) {
 async function insert(transaction) {
   const completeTransaction = getCompleteTransaction(transaction);
   const response = await api.post(`${API_URL}/create`, completeTransaction);
-  return response.data.id;
+  return response.data.transaction;
 }
 
 async function update(transaction) {
