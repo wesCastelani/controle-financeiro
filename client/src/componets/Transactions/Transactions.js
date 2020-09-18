@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import css from './transactions.module.css';
 import Action from './Action';
@@ -6,6 +6,15 @@ import Period from '../Inputs/Period';
 
 export default function Transactions(props) {
   const { transactions, onDelete, selectTransaction } = props;
+
+  const [ordenadeTransactions, setOrdanadeTransaction] = useState([]);
+
+  useEffect(() => {
+    let ordenade = transactions.sort((a, b) => {
+      return b.day - a.day;
+    });
+    setOrdanadeTransaction(ordenade);
+  }, [transactions]);
 
   const handleActionClick = (id, type) => {
     const transaction = transactions.find(
@@ -20,7 +29,7 @@ export default function Transactions(props) {
 
   return (
     <div>
-      {transactions.map((transaction) => {
+      {ordenadeTransactions.map((transaction) => {
         var bgColor;
         if (transaction.type === '-') {
           bgColor = styles.red;
@@ -32,11 +41,19 @@ export default function Transactions(props) {
             <span className={css.text}>{transaction.day}</span>
             <div className={css.content}>
               <div className={css.trans}>
-                <span>{transaction.category}</span>
+                <span className={css.desc}>{transaction.category}</span>
                 <span>{transaction.description}</span>
               </div>
-              <span style={{ textAlign: 'right' }}>R$ {transaction.value}</span>
+
               <div>
+                <span
+                  style={{
+                    margin: '10px',
+                    fontSize: '1.2rem',
+                  }}
+                >
+                  R$ {transaction.value}
+                </span>
                 <Action
                   id={transaction.id}
                   type="edit"

@@ -11,8 +11,6 @@ export default function App() {
   const [allTransactions, setAllTransactions] = useState([]);
   const [filter, setFilter] = useState();
   const [filteredTransactions, setFilteredTransactions] = useState([]);
-  const [revenue, setRevenue] = useState(0);
-  const [expenses, setExpenses] = useState(0);
   const [period, setPeriod] = useState('2019-01');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState();
@@ -33,7 +31,6 @@ export default function App() {
           yearMonthDay: transaction.yearMonthDay,
           type: transaction.type,
           descriptionToLowerCase: transaction.description.toLowerCase(),
-          isDeleted: false,
         };
       });
       setTimeout(() => {
@@ -45,27 +42,6 @@ export default function App() {
     getTransactions();
   }, [period]);
 
-  const revenuesCalculator = (filteredTransactions) => {
-    let revenueFilter = filteredTransactions.filter((transaction) => {
-      return transaction.type.includes('+');
-    });
-    const totalRevenue = revenueFilter.reduce((accumulator, current) => {
-      return accumulator + current.value;
-    }, 0);
-    console.log(totalRevenue);
-    return totalRevenue;
-  };
-
-  const exprensesCalculator = (filteredTransactions) => {
-    let expensesFilter = filteredTransactions.filter((transaction) => {
-      return transaction.type.includes('-');
-    });
-    const totalExpense = expensesFilter.reduce((accumulator, current) => {
-      return accumulator + current.value;
-    }, 0);
-    return totalExpense;
-  };
-
   const handleDelete = async (transactionToDelete) => {
     const isDeleted = await api.deleteTransaction(transactionToDelete);
     if (isDeleted) {
@@ -75,11 +51,7 @@ export default function App() {
       const newAllTransactions = Object.assign([], filteredTransactions);
       newAllTransactions.splice(index, 1);
 
-      const revenues = revenuesCalculator(newAllTransactions);
-      const expenses = exprensesCalculator(newAllTransactions);
       setFilteredTransactions(newAllTransactions);
-      setRevenue(revenues);
-      setExpenses(expenses);
     }
   };
 
@@ -93,14 +65,11 @@ export default function App() {
     const filteredTransactions = allTransactions.filter((transaction) => {
       return transaction.descriptionToLowerCase.includes(filterLowerCase);
     });
-    const revenues = revenuesCalculator(filteredTransactions);
-    const expenses = exprensesCalculator(filteredTransactions);
     setFilteredTransactions(filteredTransactions);
-    setRevenue(revenues);
-    setExpenses(expenses);
   };
 
   const handleClose = () => {
+    setSelectedTransaction(null);
     setIsModalOpen(false);
   };
 
@@ -120,7 +89,6 @@ export default function App() {
     }
     if (mode === 'edit') {
       const updatedTransaction = await api.update(newTransaction);
-      console.log(updatedTransaction);
       const newTransactions = [...filteredTransactions];
       const index = newTransactions.findIndex(
         (transaction) => transaction.id === newTransaction.id
@@ -135,11 +103,7 @@ export default function App() {
     <div className="container">
       <h1>Desafio Final do Bootcamp Full Stack</h1>
       <Period onChange={handlePeriodChange} value={period}></Period>
-      <Stats
-        transactions={filteredTransactions}
-        revenue={revenue}
-        expense={expenses}
-      ></Stats>
+      <Stats transactions={filteredTransactions}></Stats>
       <Inputs
         onClick={selectTransaction}
         filter={filter}

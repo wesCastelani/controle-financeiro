@@ -23,6 +23,13 @@
   align-items: flex-start;
 }
 
+.desc {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
 .text {
   margin-right: 20px;
+  font-weight: bold;
+  font-size: 1.5rem;
 }

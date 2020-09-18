@@ -7,6 +7,7 @@ export default function Action({ id, type, onClick }) {
 
   return (
     <span
+      style={{ fontSize: '1.2rem' }}
       onClick={handleItemClick}
       style={{ cursor: 'pointer' }}
       className="material-icons"
