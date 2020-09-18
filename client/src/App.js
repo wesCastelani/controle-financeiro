@@ -101,7 +101,7 @@ export default function App() {
 
   return (
     <div className="container">
-      <h1>Desafio Final do Bootcamp Full Stack</h1>
+      <h2 style={{ textAlign: 'center' }}>Controle de finanças pessoal</h2>
       <Period onChange={handlePeriodChange} value={period}></Period>
       <Stats transactions={filteredTransactions}></Stats>
       <Inputs
