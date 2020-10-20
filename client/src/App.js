@@ -6,6 +6,7 @@ import Inputs from './componets/Inputs/Inputs';
 import Stats from './componets/Stats/Stats';
 import Period from './componets/Inputs/Period';
 import ModalCtrl from './componets/Modal/ModalCtrl';
+import Spinner from './componets/Spinner/Spinner';
 
 export default function App() {
   const [allTransactions, setAllTransactions] = useState([]);
@@ -109,6 +110,7 @@ export default function App() {
         filter={filter}
         onChangeFilter={handleChangeFilter}
       ></Inputs>
+      {filteredTransactions.length === 0 && <Spinner>Aguarde...</Spinner>}
       <Transactions
         onDelete={handleDelete}
         selectTransaction={selectTransaction}

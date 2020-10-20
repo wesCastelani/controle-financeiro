@@ -223,6 +223,8 @@ export default function ModalCtrl({
                 className="browser-default"
                 value={date}
                 onChange={handleDateChange}
+                max="2021-12-31"
+                min="2019-01-01"
                 required
               />
             </div>
